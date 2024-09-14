@@ -1,3 +1,4 @@
+using NavMeshPlus.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
@@ -13,6 +14,9 @@ public class BuildManager : MonoBehaviour
 
   private BuildSystem _buildSystem;
   private BuildingPreviewSystem _buildingPreviewSystem;
+
+  [field: SerializeField]
+  public NavMeshSurface NavMeshSurface;
 
   [SerializeField] BuildingSO _selectedBuilding;
 
@@ -31,6 +35,7 @@ public class BuildManager : MonoBehaviour
       if (Mouse.current.leftButton.wasPressedThisFrame)
       {
         _buildSystem.PlaceBuilding(_buildingPreviewSystem);
+        NavMeshSurface.BuildNavMeshAsync();
       }
     }
   }

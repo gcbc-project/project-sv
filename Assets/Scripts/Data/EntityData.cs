@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public interface EntityData
+public class EntityData
 {
-    public GenericValue<Vector2> GetLocation();
+    public ObservableValue<Vector2> Location = new();
 }

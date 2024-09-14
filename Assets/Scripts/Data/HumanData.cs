@@ -55,6 +55,8 @@ public class HumanData : EntityData
         var instance = new HumanData();
         instance._so = entitySO;
         instance.Load();
+
+        GameManager.Get().Data.Humans.Add(instance);
         return instance;
     }
 
@@ -78,9 +80,16 @@ public class HumanData : EntityData
         {
             case HumanState.Move:
                 MoveToNextBuilding(timeDelta);
+                if (IsCloseToNextBuilding())
+                {
+                    SetState(HumanState.Wait);
+                }
                 break;
             case HumanState.Wait:
                 TryUseBuilding();
+                break;
+            case HumanState.Use:
+                // do nothing
                 break;
         }
     }
@@ -92,7 +101,7 @@ public class HumanData : EntityData
     
     public void Earn(float gold)
     {
-        GameManager.Get().Data.Gold.Value += (uint)(_buff.Multiplier * gold);
+        GameManager.Get().Data.Gold.Value += (int)(_buff.Multiplier * gold);
     }
 
     public void CompleteUsing(BuildingSO buildingSO)
@@ -146,7 +155,12 @@ public class HumanData : EntityData
 
     void MoveToNextBuilding(float timeDelta)
     {
-        Location.Value += (_nextBuilding.Location.Value - Location.Value).normalized * timeDelta * _buff.Multiplier;
+        Location.Value += (_nextBuilding.Location.Value - Location.Value).normalized * timeDelta * _buff.Multiplier * GameData.Human_MovementSpeed;
+    }
+
+    bool IsCloseToNextBuilding()
+    {
+        return (_nextBuilding.Location.Value - Location.Value).sqrMagnitude < GameData.Human_UseSqrDistance;
     }
 
     void TryUseBuilding()

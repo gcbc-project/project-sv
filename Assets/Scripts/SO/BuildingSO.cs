@@ -15,7 +15,7 @@ public enum BuildingType
 public struct BuildingEffect
 {
     public BuildingType Type;
-    public int Value;
+    public float Value;
 }
 
 [CreateAssetMenu(fileName = "NewBuilding", menuName = "Scriptable Object/Building")]

@@ -58,6 +58,8 @@ public class BuildingData : EntityData
         var instance = new BuildingData();
         instance._so = buildingSO;
         instance.Load();
+
+        GameManager.Get().Data.Buildings.Add(instance);
         return instance;
     }
 

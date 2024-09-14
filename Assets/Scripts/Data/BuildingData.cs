@@ -1,19 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 
 public class BuildingSlot
 {
-    public ObservableValue<HumanData> UsingHuman;
-    public ObservableValue<float> RemainTime;
-    public ObservableValue<float> CoolTime;
+    public ReactiveProperty<HumanData> UsingHuman = new();
+    public ReactiveProperty<float> RemainTime = new();
+    public ReactiveProperty<float> CoolTime = new();
 
-    BuildingSlot()
-    {
-        UsingHuman.Value = new();
-    }
 
     public bool SetHuman(HumanData humanData)
     {
@@ -51,11 +48,18 @@ public class BuildingSlot
 [Serializable]
 public class BuildingData : EntityData
 {
-    public ObservableValue<BuildingSO> SO;
-    public ObservableValue<float> BuildingTime;
+    private BuildingData() {}
+    public static BuildingData Create(BuildingSO buildingSO)
+    {
+        var instance = new BuildingData();
+        instance.SO = buildingSO;
+        instance.Load();
+        return instance;
+    }
 
-    [NonSerialized]
-    public ObservableValue<BuildingSlot>[] Slots = new ObservableValue<BuildingSlot>[3];
+    public ReactiveProperty<float> BuildingTime = new();
+
+    ReactiveProperty<BuildingSlot>[] Slots = { new(new()), new(new()), new(new()) };
 
     public void Update(float timeDelta)
     {

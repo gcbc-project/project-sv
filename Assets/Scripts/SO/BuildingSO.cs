@@ -22,11 +22,12 @@ public struct BuildingEffect
 [CreateAssetMenu(fileName = "NewBuilding", menuName = "Scriptable Object/Building")]
 public class BuildingSO : ScriptableObject
 {
+    public string Name;
     public int BuildCost;
     public int MaintainCost;
     public int RequiredFame;
     public float BuildTime;
     public BuildingEffect[] BuildingEffects;
-    public Tilemap Tile;
+    public TileBase Tile;
     public Vector2Int Size;
 }

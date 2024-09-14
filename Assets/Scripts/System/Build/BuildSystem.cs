@@ -4,17 +4,17 @@ using UnityEngine.Tilemaps;
 public class BuildSystem
 {
   private Tilemap tilemap;
-  private Building selectedBuilding;
+  private BuildingSO selectedBuilding;
 
   public BuildSystem(Tilemap tilemap)
   {
     this.tilemap = tilemap;
   }
 
-  public void SelectBuilding(Building building, BuildingPreviewSystem previewSystem)
+  public void SelectBuilding(BuildingSO building, BuildingPreviewSystem previewSystem)
   {
     selectedBuilding = building;
-    previewSystem.UpdatePreview(selectedBuilding);
+    previewSystem.SetSelectedBuilding(selectedBuilding);
   }
 
   public void PlaceBuilding(BuildingPreviewSystem previewSystem)

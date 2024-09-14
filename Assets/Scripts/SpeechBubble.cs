@@ -8,13 +8,14 @@ public class SpeechBubble : MonoBehaviour
 {
     // Dictionary to store Name-Dialog pairs (with dialog as a List)
     static Dictionary<string, List<string>> dialogDictionary = new Dictionary<string, List<string>>();
-    [SerializeField] static GameObject speechBubblePrefab;
+    public GameObject tmpSpeechBubblePrefab;
+    static GameObject speechBubblePrefab;
     // Start is called before the first frame update
     void Start()
     {
         // Path to the CSV file (place it in Assets/Resources folder for easy access)
         string filePath = Path.Combine(Application.dataPath, "Resources/csv/", "61315 게임잼 스프레드시트 - 상호작용대사.csv");
-
+        speechBubblePrefab = tmpSpeechBubblePrefab;
         // Read the CSV file and populate the dictionary
         ReadCSV(filePath);
     }

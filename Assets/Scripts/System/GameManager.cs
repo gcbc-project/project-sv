@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
 
     public GameState currentState;
 
+    Dictionary<Type, MonoBehaviour> _monoSingletons = new();
+
     private void Awake()
     {
         Init();
@@ -47,6 +49,54 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SetState(GameState.MainMenu);
+    }
+
+    /// <summary> 
+    /// returns false if same type of MonoSingle already exists.
+    /// GameObject will be destroyed if false returned.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="inMonoSingleton"></param>
+    /// <returns></returns>
+    public bool RegisterMonoSingleton<T>(MonoSingleton<T> inMonoSingleton)
+    {
+        if (inMonoSingleton == null)
+        {
+            Debug.LogError("do not register null");
+        }
+
+        bool alreadyExists = _monoSingletons.TryGetValue(typeof(T), out MonoBehaviour findee);
+        bool registingAgain = findee == inMonoSingleton;
+
+        if (alreadyExists && registingAgain == false)
+        {
+            Destroy(inMonoSingleton, 0.1f);
+        }
+        else if (registingAgain == false)
+        {
+            _monoSingletons.Add(typeof(T), inMonoSingleton);
+        }
+
+        return !alreadyExists;
+    }
+
+    public void UnregisterMonoSingleton<T>(MonoSingleton<T> inMonoSingleton)
+    {
+        if (inMonoSingleton == null)
+        {
+            Debug.LogError("do not unregister null");
+        }
+
+        _monoSingletons.TryGetValue(typeof(T), out MonoBehaviour findee);
+        if (inMonoSingleton == findee)
+        {
+            _monoSingletons.Remove(typeof(T));
+        }
+    }
+
+    public T GetMonoSingleton<T>() where T : MonoSingleton<T>
+    {
+        return (T)_monoSingletons.GetValueOrDefault(typeof(T));
     }
 
     public void SetState(GameState newState)

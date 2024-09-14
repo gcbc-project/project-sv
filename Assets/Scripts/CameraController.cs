@@ -25,7 +25,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         // 마우스 좌클릭 중일 때 드래그 시작
-        if (Mouse.current.leftButton.isPressed)
+        if (Mouse.current.rightButton.isPressed)
         {
             // 드래그 시작 시점에서 마우스 위치와 카메라 위치 기록
             if (dragOrigin == Vector2.zero)

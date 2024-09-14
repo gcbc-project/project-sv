@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 
 public enum BuildingType
@@ -26,4 +27,6 @@ public class BuildingSO : ScriptableObject
     public int RequiredFame;
     public float BuildTime;
     public BuildingEffect[] BuildingEffects;
+    public Tilemap Tile;
+    public Vector2Int Size;
 }

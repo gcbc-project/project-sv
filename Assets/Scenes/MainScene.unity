@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 221524551}
   - component: {fileID: 221524553}
   - component: {fileID: 221524552}
+  - component: {fileID: 221524554}
   m_Layer: 0
   m_Name: BuildMainTilemap
   m_TagString: Untagged
@@ -338,6 +339,17 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!210 &221524554
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221524550}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 1
 --- !u!1 &419830018
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,7 +862,8 @@ MonoBehaviour:
   ValidityTilemap: {fileID: 1999515158}
   ValidTile: {fileID: 11400000, guid: f5257c04e4eb74c7a990e50a7c8a3f95, type: 2}
   InvalidTile: {fileID: 11400000, guid: 1ac3a638d6bb043eaa379a76aaacb085, type: 2}
-  _testBuildingSO: {fileID: 11400000, guid: fd213923ab06246dbb196d76670fe915, type: 2}
+  TransparentTile: {fileID: 11400000, guid: 6ab7119453629456caae690ef15b23b1, type: 2}
+  _selectedBuilding: {fileID: 11400000, guid: 88ac60644e6ea48a59fc1d4a855b80e0, type: 2}
 --- !u!4 &879087622
 Transform:
   m_ObjectHideFlags: 0
@@ -9477,7 +9490,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16

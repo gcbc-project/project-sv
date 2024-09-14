@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d288c096fe6ba4947b29119911cef8cb, type: 3}
   m_Name: 100
   m_EditorClassIdentifier: 
+  Prefab: {fileID: 6210550366467738615, guid: c793b952a60514206b17d0a85d13f0e5, type: 3}
   Name: "\uBE48\uBBFC\uAC00"
   BuildCost: 50
   MaintainCost: 0
@@ -21,5 +22,4 @@ MonoBehaviour:
   - Type: 1
     Value: 2
   Tile: {fileID: 11400000, guid: 0029735422cc74f83af9eabd978baf70, type: 2}
-  Prefab: {fileID: 0}
   Size: {x: 3, y: 4}

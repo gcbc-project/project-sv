@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
 public class BuildManager : MonoBehaviour
@@ -8,21 +9,30 @@ public class BuildManager : MonoBehaviour
   public Tilemap ValidityTilemap;
   public TileBase ValidTile;
   public TileBase InvalidTile;
+  public TileBase TransparentTile;
 
   private BuildSystem _buildSystem;
   private BuildingPreviewSystem _buildingPreviewSystem;
 
-  [SerializeField] BuildingSO _testBuildingSO;
+  [SerializeField] BuildingSO _selectedBuilding;
 
   void Awake()
   {
-    _buildSystem = new BuildSystem(MainTilemap);
-    _buildingPreviewSystem = new BuildingPreviewSystem(PreviewTilemap, ValidityTilemap, ValidTile, InvalidTile);
+    _buildSystem = new BuildSystem(MainTilemap, TransparentTile);
+    _buildingPreviewSystem = new BuildingPreviewSystem(PreviewTilemap, ValidityTilemap, MainTilemap, ValidTile, InvalidTile);
   }
 
   void Update()
   {
-    _buildingPreviewSystem.PreviewUpdate();
+    if (_selectedBuilding != null)
+    {
+      _buildingPreviewSystem.PreviewUpdate();
+
+      if (Mouse.current.leftButton.wasPressedThisFrame)
+      {
+        _buildSystem.PlaceBuilding(_buildingPreviewSystem);
+      }
+    }
   }
 
   public BuildSystem GetBuildSystem()
@@ -37,6 +47,6 @@ public class BuildManager : MonoBehaviour
 
   public void TestBuild()
   {
-    _buildSystem.SelectBuilding(_testBuildingSO, _buildingPreviewSystem);
+    _buildSystem.SelectBuilding(_selectedBuilding, _buildingPreviewSystem);
   }
 }

@@ -7,15 +7,17 @@ public class BuildingPreviewSystem
 {
   private Tilemap _previewTilemap; // 건물 미리보기 타일맵
   private Tilemap _validityTilemap; // 설치 가능성 타일맵
+  private Tilemap _mainTilemap;
   private TileBase _validTile;
   private TileBase _invalidTile;
   private BuildingSO _selectedBuilding;
   private Vector3Int _previousCellPosition;
 
-  public BuildingPreviewSystem(Tilemap previewTilemap, Tilemap validityTilemap, TileBase validTile, TileBase invalidTile)
+  public BuildingPreviewSystem(Tilemap previewTilemap, Tilemap validityTilemap, Tilemap mainTilemap, TileBase validTile, TileBase invalidTile)
   {
     this._previewTilemap = previewTilemap;
     this._validityTilemap = validityTilemap;
+    this._mainTilemap = mainTilemap;
     this._validTile = validTile;
     this._invalidTile = invalidTile;
     _previousCellPosition = Vector3Int.zero; // 초기값 설정
@@ -74,41 +76,48 @@ public class BuildingPreviewSystem
 
     if (_selectedBuilding == null) return;
 
-    // 건물 크기의 절반을 계산하여 마우스 좌표를 가운데로 맞춤
-    Vector3Int offset = new Vector3Int(_selectedBuilding.Size.x / 2, _selectedBuilding.Size.y / 2, 0);
-    Vector3Int centeredPosition = position - offset;
+    // 건물의 좌측 상단 위치 계산 (미리보기와 동일한 방식)
+    Vector3Int offset = new Vector3Int(-_selectedBuilding.Size.x / 2, _selectedBuilding.Size.y / 2 - 1, 0);
+    Vector3Int topLeftPosition = position + offset;
 
+    Tilemap tilemap = _mainTilemap;
+
+    // 각 셀별로 설치 가능 여부를 판단하여 타일 설정
     for (int x = 0; x < _selectedBuilding.Size.x; x++)
     {
       for (int y = 0; y < _selectedBuilding.Size.y; y++)
       {
-        Vector3Int cell = centeredPosition + new Vector3Int(x, y, 0);
-        if (CanPlaceBuilding(cell))
-        {
-          _validityTilemap.SetTile(cell, _validTile); // 설치 가능한 위치에 초록색 타일 표시
-        }
-        else
-        {
-          _validityTilemap.SetTile(cell, _invalidTile); // 설치 가능한 위치에 초록색 타일 표시
-        }
+        Vector3Int cell = topLeftPosition + new Vector3Int(x, -y, 0);
+
+        // 해당 셀에 타일이 있는지 확인
+        bool cellCanPlace = tilemap.GetTile(cell) == null;
+
+        // 설치 가능 여부에 따라 타일 선택
+        TileBase tileToSet = cellCanPlace ? _validTile : _invalidTile;
+
+        // 타일맵에 타일 설정
+        _validityTilemap.SetTile(cell, tileToSet);
       }
     }
   }
 
-  private bool CanPlaceBuilding(Vector3Int position)
+  private bool CanPlaceBuilding(Vector3Int topLeftPosition)
   {
-    Tilemap tilemap = _validityTilemap;
+    Tilemap tilemap = _mainTilemap;
     for (int x = 0; x < _selectedBuilding.Size.x; x++)
     {
       for (int y = 0; y < _selectedBuilding.Size.y; y++)
       {
-        Vector3Int cell = position + new Vector3Int(x, y, 0);
+        // Y축 방향 조정 (-y)를 통해 아래 방향으로 검사
+        Vector3Int cell = topLeftPosition + new Vector3Int(x, -y, 0);
         if (tilemap.GetTile(cell) != null)
         {
-          return false;
+          return false; // 해당 위치에 타일이 이미 있음
         }
       }
     }
-    return true;
+    return true; // 모든 위치가 비어 있음
   }
+
+
 }

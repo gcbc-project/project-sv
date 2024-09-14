@@ -16,7 +16,7 @@ public enum BuildingType
 public struct BuildingEffect
 {
     public BuildingType Type;
-    public int Value;
+    public float Value;
 }
 
 [CreateAssetMenu(fileName = "NewBuilding", menuName = "Scriptable Object/Building")]
@@ -27,7 +27,7 @@ public class BuildingSO : EntitySO
     public int MaintainCost;
     public int RequiredFame;
     public float BuildTime;
-    public BuildingEffect[] BuildingEffects;
     public TileBase Tile;
     public Vector2Int Size;
+    public BuildingEffect Effect;
 }

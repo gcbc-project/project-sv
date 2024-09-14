@@ -15,25 +15,25 @@ public class EntityData
     public ReactiveProperty<Vector2> Location = new();
 
     [SerializeField]
-    protected EntitySO SO;
+    protected EntitySO _so;
 
     [NonSerialized]
-    public GameObject Entity;
+    public GameObject gameObject;
 
 
     void OnLocationChanged(Vector2 vector)
     {
-        if (Entity)
+        if (gameObject)
         {
-            Entity.gameObject.transform.position = vector;
+            gameObject.transform.position = vector;
         }
     }
 
     public virtual void Load()
     {
-        if (Entity == null)
+        if (gameObject == null)
         {
-            Entity = GameObject.Instantiate(SO.Prefab);
+            gameObject = GameObject.Instantiate(_so.Prefab);
         }
         OnLocationChanged(Location.Value);
     }

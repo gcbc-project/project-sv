@@ -1,24 +1,21 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UniRx;
-using UnityEngine;
-
 
 public class BuildingSlot
 {
-    public ReactiveProperty<HumanData> UsingHuman = new();
-    public ReactiveProperty<float> RemainTime = new();
-    public ReactiveProperty<float> CoolTime = new();
+    HumanData _usingHuman;
+    float _remainTime;
+    float _coolTime;
+    public Action<HumanData> OnComplete;
 
 
     public bool SetHuman(HumanData humanData)
     {
-        if (UsingHuman.Value == null && CoolTime.Value <= 0.0f)
+        if (_usingHuman == null && _coolTime <= 0.0f)
         {
-            UsingHuman.Value = humanData;
-            RemainTime.Value = 3.0f;
-            CoolTime.Value = 5.0f;
+            _usingHuman = humanData;
+            _remainTime = GameData.Building_UseTime;
+            _coolTime = GameData.Building_CoolTime;
             return true;
         }
         else
@@ -29,17 +26,18 @@ public class BuildingSlot
 
     public void Update(float timeDelta)
     {
-        if (RemainTime.Value > 0.0f)
+        if (_remainTime > 0.0f)
         {
-            RemainTime.Value -= timeDelta;
-        }
-        else
-        {
-            UsingHuman.Value = null;
-            if (CoolTime.Value > 0.0f)
+            _remainTime -= timeDelta;
+            if (_remainTime <= 0.0f)
             {
-                CoolTime.Value -= timeDelta;
+                OnComplete?.Invoke(_usingHuman);
+                _usingHuman = null;
             }
+        }
+        else if (_coolTime > 0.0f)
+        {
+            _coolTime -= timeDelta;
         }
     }
 }
@@ -48,18 +46,24 @@ public class BuildingSlot
 [Serializable]
 public class BuildingData : EntityData
 {
-    private BuildingData() {}
+    private BuildingData() 
+    {
+        foreach (var ele in Slots)
+        {
+            ele.OnComplete = OnComplete;
+        }
+    }
     public static BuildingData Create(BuildingSO buildingSO)
     {
         var instance = new BuildingData();
-        instance.SO = buildingSO;
+        instance._so = buildingSO;
         instance.Load();
         return instance;
     }
 
     public ReactiveProperty<float> BuildingTime = new();
 
-    ReactiveProperty<BuildingSlot>[] Slots = { new(new()), new(new()), new(new()) };
+    BuildingSlot[] Slots = { new(), new(), new() };
 
     public void Update(float timeDelta)
     {
@@ -70,19 +74,42 @@ public class BuildingData : EntityData
 
         foreach (var ele in Slots)
         {
-            ele.Value.Update(timeDelta);
+            ele.Update(timeDelta);
         }
+    }
+
+    public BuildingSO GetSO()
+    {
+        return (BuildingSO)_so;
     }
 
     public bool UseBuilding(HumanData humanData)
     {
         foreach (var ele in Slots)
         {
-            if (ele.Value.SetHuman(humanData))
+            if (ele.SetHuman(humanData))
             {
                 return true;
             }
         }
         return false;
+    }
+
+    void OnComplete(HumanData humanData)
+    {
+        var so = GetSO();
+        var buildingEffect = so.Effect;
+
+        switch (buildingEffect.Type)
+        {
+            case BuildingType.House:
+                humanData.Buff(buildingEffect.Value);
+                break;
+            case BuildingType.Shop:
+                humanData.Earn(buildingEffect.Value);
+                break;
+        }
+
+        humanData.CompleteUsing(so);
     }
 }

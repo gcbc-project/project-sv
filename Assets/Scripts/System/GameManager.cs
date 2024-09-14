@@ -6,9 +6,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     static GameManager _instance;
-    public static GameManager Get(bool AllowCreation = true)
+    public static GameManager Get(bool allowCreation = true)
     {
-        if (_instance == null && AllowCreation)
+        if (_instance == null && allowCreation)
         {
             new GameManager().Init();
         }
@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
         GameOver
     }
 
-    public GameState currentState;
+    public GameState CurrentState;
+    public GameData Data;
 
     Dictionary<Type, MonoBehaviour> _monoSingletons = new();
 
@@ -49,6 +50,18 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SetState(GameState.MainMenu);
+
+        Data.LoadData();
+    }
+
+    private void Update()
+    {
+        Data.Update(Time.deltaTime);
+    }
+
+    private void OnDestroy()
+    {
+        Data.SaveData();
     }
 
     /// <summary> 
@@ -101,7 +114,7 @@ public class GameManager : MonoBehaviour
 
     public void SetState(GameState newState)
     {
-        currentState = newState;
+        CurrentState = newState;
         // Implement behavior based on the new state
         switch (newState)
         {

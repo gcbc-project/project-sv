@@ -80,9 +80,16 @@ public class HumanData : EntityData
         {
             case HumanState.Move:
                 MoveToNextBuilding(timeDelta);
+                if (IsCloseToNextBuilding())
+                {
+                    SetState(HumanState.Wait);
+                }
                 break;
             case HumanState.Wait:
                 TryUseBuilding();
+                break;
+            case HumanState.Use:
+                // do nothing
                 break;
         }
     }
@@ -148,7 +155,12 @@ public class HumanData : EntityData
 
     void MoveToNextBuilding(float timeDelta)
     {
-        Location.Value += (_nextBuilding.Location.Value - Location.Value).normalized * timeDelta * _buff.Multiplier;
+        Location.Value += (_nextBuilding.Location.Value - Location.Value).normalized * timeDelta * _buff.Multiplier * GameData.Human_MovementSpeed;
+    }
+
+    bool IsCloseToNextBuilding()
+    {
+        return (_nextBuilding.Location.Value - Location.Value).sqrMagnitude < GameData.Human_UseSqrDistance;
     }
 
     void TryUseBuilding()

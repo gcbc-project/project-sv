@@ -19,6 +19,8 @@ public class GameData
     public const float Game_DayTime = 10.0f;
     public const float Game_WeekTime = Game_DayTime * 7;
     public const float Game_MonthTime = Game_WeekTime * 4;
+    public const float Human_UseSqrDistance = 4.0f;
+    public const float Human_MovementSpeed = 1.0f;
     public const float Human_BuffTime = 30.0f;
     public const float Building_UseTime = 3.0f;
     public const float Building_CoolTime = 5.0f;

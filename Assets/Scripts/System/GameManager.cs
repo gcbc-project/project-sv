@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
         GameOver
     }
 
-    public GameState currentState;
+    public GameState CurrentState;
+    public GameData Data;
 
     Dictionary<Type, MonoBehaviour> _monoSingletons = new();
 
@@ -101,7 +102,7 @@ public class GameManager : MonoBehaviour
 
     public void SetState(GameState newState)
     {
-        currentState = newState;
+        CurrentState = newState;
         // Implement behavior based on the new state
         switch (newState)
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 
@@ -32,14 +33,31 @@ public struct HumanBuff
 [Serializable]
 public class HumanData : EntityData
 {
+    HumanData()
+    {
+        PrevBuildings = new ReactiveProperty<BuildingSO>[3];
+        foreach (var ele in PrevBuildings)
+        {
+            ele.Value = new();
+        }
+    }
 
-    public ObservableValue<HumanOutfit> Outfit;
-    public ObservableValue<BuildingSO>[] PrevBuildings = new ObservableValue<BuildingSO>[3];
+    public static HumanData Create(EntitySO entitySO)
+    {
+        var instance = new HumanData();
+        instance.SO = entitySO;
+        instance.Load();
+        return instance;
+    }
+
+
+    public ReactiveProperty<HumanOutfit> Outfit = new();
+    public ReactiveProperty<BuildingSO>[] PrevBuildings;
 
     [NonSerialized]
-    public ObservableValue<HumanBuff> Buff;
+    public ReactiveProperty<HumanBuff> Buff = new();
     [NonSerialized]
-    public ObservableValue<BuildingData> NextBuilding;
+    public ReactiveProperty<BuildingData> NextBuilding = new();
 
     public void Update(float timeDelta)
     {

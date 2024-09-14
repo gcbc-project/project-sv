@@ -19,7 +19,7 @@ public struct BuildingEffect
 }
 
 [CreateAssetMenu(fileName = "NewBuilding", menuName = "Scriptable Object/Building")]
-public class BuildingSO : ScriptableObject
+public class BuildingSO : EntitySO
 {
     public int BuildCost;
     public int MaintainCost;

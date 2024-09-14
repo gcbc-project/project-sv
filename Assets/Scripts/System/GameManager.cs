@@ -50,11 +50,18 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SetState(GameState.MainMenu);
+
+        Data.LoadData();
     }
 
     private void Update()
     {
         Data.Update(Time.deltaTime);
+    }
+
+    private void OnDestroy()
+    {
+        Data.SaveData();
     }
 
     /// <summary> 

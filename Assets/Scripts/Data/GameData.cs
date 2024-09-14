@@ -1,48 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
-
-[Serializable]
-public struct ObservableValue<T>
-{
-    [SerializeField]
-    T _value;
-    public T Value
-    {
-        get => _value;
-        set
-        {
-            if (!EqualityComparer<T>.Default.Equals(_value, value))
-            {
-                T oldValue = _value;
-                _value = value;
-                OnChanged?.Invoke(value, oldValue);
-            }
-        }
-    }
-
-    public UnityEvent<T, T> OnChanged;
-}
 
 
 [Serializable]
 public class GameData
 {
-    GameData()
-    {
-        Buildings.Value = new();
-        Humans.Value = new();
-    }
-
-    public ObservableValue<uint> Gold;
-    public ObservableValue<float> Time;
-    public ObservableValue<uint> Fame;
-    public ObservableValue<uint> ExpansionLevel;
-    public ObservableValue<float> ExpansionDuration;
-    public ObservableValue<List<BuildingData>> Buildings;
-    public ObservableValue<List<HumanData>> Humans;
+    public ReactiveProperty<uint> Gold = new();
+    public ReactiveProperty<float> Time = new();
+    public ReactiveProperty<uint> Fame = new();
+    public ReactiveProperty<uint> ExpansionLevel = new();
+    public ReactiveProperty<float> ExpansionDuration = new();
+    public ReactiveProperty<List<BuildingData>> Buildings = new();
+    public ReactiveProperty<List<HumanData>> Humans = new();
 
     public void Update(float timeDelta)
     {
@@ -66,5 +39,18 @@ public class GameData
         {
             ele.Update(timeDelta);
         }
+    }
+
+    public void LoadData()
+    {
+        if (PlayerPrefs.HasKey("save"))
+        {
+            JsonUtility.FromJsonOverwrite(PlayerPrefs.GetString("save"), this);
+        }
+    }
+
+    public void SaveData()
+    {
+        PlayerPrefs.SetString("save", JsonUtility.ToJson(this));
     }
 }

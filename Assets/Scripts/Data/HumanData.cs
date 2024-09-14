@@ -55,6 +55,8 @@ public class HumanData : EntityData
         var instance = new HumanData();
         instance._so = entitySO;
         instance.Load();
+
+        GameManager.Get().Data.Humans.Add(instance);
         return instance;
     }
 
@@ -92,7 +94,7 @@ public class HumanData : EntityData
     
     public void Earn(float gold)
     {
-        GameManager.Get().Data.Gold.Value += (uint)(_buff.Multiplier * gold);
+        GameManager.Get().Data.Gold.Value += (int)(_buff.Multiplier * gold);
     }
 
     public void CompleteUsing(BuildingSO buildingSO)

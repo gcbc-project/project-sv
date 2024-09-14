@@ -27,6 +27,10 @@ public class GameManager : MonoBehaviour
     public GameState CurrentState;
     public GameData Data;
 
+    [SerializeField]
+    EntitySO _humanSO;
+    public EntitySO HumanSO { get => _humanSO; }
+
     Dictionary<Type, MonoBehaviour> _monoSingletons = new();
 
     private void Awake()

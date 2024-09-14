@@ -14,7 +14,7 @@ public class BuildPopUpActiveTab : MonoBehaviour
         NotActiveTabContent[0].SetActive(false);
         NotActiveTabContent[1].SetActive(false);
         NotActiveTabContent[2].SetActive(false);
-
+        NotActiveTabContent[3].SetActive(false);
 
     }
 }

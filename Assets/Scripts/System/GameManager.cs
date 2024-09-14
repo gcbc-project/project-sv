@@ -6,9 +6,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     static GameManager _instance;
-    public static GameManager Get(bool AllowCreation = true)
+    public static GameManager Get(bool allowCreation = true)
     {
-        if (_instance == null && AllowCreation)
+        if (_instance == null && allowCreation)
         {
             new GameManager().Init();
         }
@@ -50,6 +50,18 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SetState(GameState.MainMenu);
+
+        Data.LoadData();
+    }
+
+    private void Update()
+    {
+        Data.Update(Time.deltaTime);
+    }
+
+    private void OnDestroy()
+    {
+        Data.SaveData();
     }
 
     /// <summary> 

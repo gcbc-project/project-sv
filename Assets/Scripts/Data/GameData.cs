@@ -1,41 +1,56 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
 
+
 [Serializable]
-public class GenericValue<T>
+public class GameData
 {
-    [SerializeField]
-    T _value;
-    public T Value
+    public ReactiveProperty<uint> Gold = new();
+    public ReactiveProperty<float> Time = new();
+    public ReactiveProperty<uint> Fame = new();
+    public ReactiveProperty<uint> ExpansionLevel = new();
+    public ReactiveProperty<float> ExpansionDuration = new();
+    public ReactiveProperty<List<BuildingData>> Buildings = new();
+    public ReactiveProperty<List<HumanData>> Humans = new();
+
+    public void Update(float timeDelta)
     {
-        get => _value;
-        set
+        Time.Value += timeDelta;
+
+        if (ExpansionDuration.Value > 0.0f)
         {
-            if (!EqualityComparer<T>.Default.Equals(_value, value))
+            ExpansionDuration.Value -= timeDelta;
+            if (ExpansionDuration.Value <= 0.0f)
             {
-                T oldValue = _value;
-                _value = value;
-                NewDelegate?.Invoke(value);
-                BothDelegate?.Invoke(value, oldValue);
+                ExpansionLevel.Value += 1;
             }
+        }
+
+        foreach (var ele in Buildings.Value)
+        {
+            ele.Update(timeDelta);
+        }
+
+        foreach (var ele in Humans.Value)
+        {
+            ele.Update(timeDelta);
         }
     }
 
-    public UnityEvent<T> NewDelegate;
-    public UnityEvent<T, T> BothDelegate;
-}
+    public void LoadData()
+    {
+        if (PlayerPrefs.HasKey("save"))
+        {
+            JsonUtility.FromJsonOverwrite(PlayerPrefs.GetString("save"), this);
+        }
+    }
 
-
-[Serializable]
-public struct GameData
-{
-    public GenericValue<ulong> Gold;
-    public GenericValue<ulong> Time;
-    public GenericValue<ulong> Fame;
-    public GenericValue<uint> ExpansionLevel;
-    public GenericValue<ulong> ExpansionDuration;
-    public GenericValue<BuildingData>[] Builldings;
+    public void SaveData()
+    {
+        PlayerPrefs.SetString("save", JsonUtility.ToJson(this));
+    }
 }

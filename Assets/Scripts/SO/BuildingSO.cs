@@ -25,5 +25,5 @@ public class BuildingSO : EntitySO
     public int MaintainCost;
     public int RequiredFame;
     public float BuildTime;
-    public BuildingEffect[] BuildingEffects;
+    public BuildingEffect Effect;
 }

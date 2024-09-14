@@ -6,16 +6,22 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
+
+
 [Serializable]
 public class GameData
 {
+    public const float Human_BuffTime = 30.0f;
+    public const float Building_UseTime = 3.0f;
+    public const float Building_CoolTime = 5.0f;
+
     public ReactiveProperty<uint> Gold = new();
     public ReactiveProperty<float> Time = new();
     public ReactiveProperty<uint> Fame = new();
     public ReactiveProperty<uint> ExpansionLevel = new();
     public ReactiveProperty<float> ExpansionDuration = new();
-    public ReactiveProperty<List<BuildingData>> Buildings = new();
-    public ReactiveProperty<List<HumanData>> Humans = new();
+    public List<BuildingData> Buildings = new();
+    public List<HumanData> Humans = new();
 
     public void Update(float timeDelta)
     {
@@ -30,12 +36,12 @@ public class GameData
             }
         }
 
-        foreach (var ele in Buildings.Value)
+        foreach (var ele in Buildings)
         {
             ele.Update(timeDelta);
         }
 
-        foreach (var ele in Humans.Value)
+        foreach (var ele in Humans)
         {
             ele.Update(timeDelta);
         }
@@ -52,5 +58,27 @@ public class GameData
     public void SaveData()
     {
         PlayerPrefs.SetString("save", JsonUtility.ToJson(this));
+    }
+
+    public BuildingData GetNearestBuilding(Vector2 vector2, BuildingSO buildingSO)
+    {
+        BuildingData buildingData = null;
+        float distance = float.MaxValue;
+        foreach (var ele in Buildings)
+        {
+            if (ele.GetSO() != buildingSO)
+            {
+                continue;
+            }
+
+            float newDistance = (vector2 - ele.Location.Value).sqrMagnitude;
+            if (distance > newDistance)
+            {
+                distance = newDistance;
+                buildingData = ele;
+            }
+        }
+
+        return buildingData;
     }
 }

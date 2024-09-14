@@ -87,6 +87,10 @@ public class BuildingPreviewSystem
         {
           _validityTilemap.SetTile(cell, _validTile); // 설치 가능한 위치에 초록색 타일 표시
         }
+        else
+        {
+          _validityTilemap.SetTile(cell, _invalidTile); // 설치 가능한 위치에 초록색 타일 표시
+        }
       }
     }
   }

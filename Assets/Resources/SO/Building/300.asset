@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d288c096fe6ba4947b29119911cef8cb, type: 3}
-  m_Name: 101
+  m_Name: 300
   m_EditorClassIdentifier: 
-  Name: "\uBE48\uBBFC"
-  BuildCost: 200
-  MaintainCost: 50
-  RequiredFame: 100
-  BuildTime: 15
+  Name: "\uBE75\uC9D1"
+  BuildCost: 100
+  MaintainCost: 10
+  RequiredFame: 0
+  BuildTime: 5
   BuildingEffects:
-  - Type: 1
-    Value: 4
-  Tile: {fileID: 11400000, guid: 0029735422cc74f83af9eabd978baf70, type: 2}
-  Size: {x: 3, y: 4}
+  - Type: 2
+    Value: 50
+  Tile: {fileID: 11400000, guid: 93d328c8228074704b13d3f3652bb308, type: 2}
+  Prefab: {fileID: 0}
+  Size: {x: 4, y: 4}

@@ -6,12 +6,15 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] CinemachineVirtualCamera virtualCamera;  // 시네머신 카메라 참조
     [SerializeField] float dragSpeed = 2f;
+    [SerializeField] float zoomSpeed = 2f;          // 줌 인/아웃 속도
+    [SerializeField] float minZoom = 5f;            // 최소 줌 값
+    [SerializeField] float maxZoom = 15f;           // 최대 줌 값
 
-    private Vector2 dragOrigin;       // 드래그 시작 시점에서의 마우스 위치
-    private Vector3 cameraOrigin;     // 드래그 시작 시점에서의 카메라 위치
-    private Vector3 cameraTargetPosition; // LateUpdate에서 적용할 카메라 위치
+    private Vector2 dragOrigin;                     // 드래그 시작 시점에서의 마우스 위치
+    private Vector3 cameraOrigin;                   // 드래그 시작 시점에서의 카메라 위치
+    private Vector3 cameraTargetPosition;           // LateUpdate에서 적용할 카메라 위치
 
-    private Transform cameraFollowTarget; // 카메라가 따라갈 빈 오브젝트
+    private Transform cameraFollowTarget;           // 카메라가 따라갈 빈 오브젝트
 
     void Start()
     {
@@ -24,7 +27,7 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        // 마우스 좌클릭 중일 때 드래그 시작
+        // 마우스 우클릭 중일 때 드래그 시작
         if (Mouse.current.rightButton.isPressed)
         {
             // 드래그 시작 시점에서 마우스 위치와 카메라 위치 기록
@@ -47,6 +50,16 @@ public class CameraController : MonoBehaviour
         {
             // 드래그가 끝나면 시작 좌표 초기화
             dragOrigin = Vector2.zero;
+        }
+
+        // 스크롤 입력에 따라 줌 인/아웃 처리
+        float scrollValue = Mouse.current.scroll.ReadValue().y;
+        if (scrollValue != 0)
+        {
+            var lens = virtualCamera.m_Lens;
+            lens.OrthographicSize -= scrollValue * zoomSpeed * Time.deltaTime;
+            lens.OrthographicSize = Mathf.Clamp(lens.OrthographicSize, minZoom, maxZoom);
+            virtualCamera.m_Lens = lens;
         }
     }
 

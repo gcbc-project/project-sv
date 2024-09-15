@@ -12,5 +12,6 @@ public class FASTER : MonoBehaviour
         if (imgIndex > 2) imgIndex -= 3;
         gameObject.GetComponent<Image>().sprite = imgList[imgIndex];
         //시간배속 증가 함수
+        Time.timeScale = imgIndex + 1;
     }
 }

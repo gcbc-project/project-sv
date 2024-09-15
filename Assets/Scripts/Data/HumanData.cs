@@ -118,6 +118,7 @@ public class HumanData : EntityData
         {
             _prevBuildings.RemoveAt(0);
         }
+        SpeechBubble.GetRandomDialog(buildingSO.Name, gameObject.transform);
         SetState(HumanState.Move);
     }
 

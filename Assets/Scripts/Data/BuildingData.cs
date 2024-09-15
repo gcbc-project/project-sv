@@ -1,5 +1,8 @@
 using System;
 using UniRx;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class BuildingSlot
 {
@@ -46,17 +49,18 @@ public class BuildingSlot
 [Serializable]
 public class BuildingData : EntityData
 {
-    private BuildingData() 
+    private BuildingData()
     {
         foreach (var ele in Slots)
         {
             ele.OnComplete = OnComplete;
         }
     }
-    public static BuildingData Create(BuildingSO buildingSO)
+    public static BuildingData Create(BuildingSO buildingSO, Vector2 location)
     {
         var instance = new BuildingData();
         instance._so = buildingSO;
+        instance.Location.Value = location;
         instance.Load();
 
         GameManager.Get().Data.Buildings.Add(instance);
@@ -113,5 +117,14 @@ public class BuildingData : EntityData
         }
 
         humanData.CompleteUsing(so);
+    }
+    public override void Load()
+    {
+        if (gameObject == null)
+        {
+            BuildManager.Get().BuildSystem.SelectedBuilding = (BuildingSO)_so;
+            gameObject = BuildManager.Get().BuildSystem.PlaceBuildingAt(new Vector3Int((int)Location.Value.x, (int)Location.Value.y, 0));
+        }
+        // OnLocationChanged(Location.Value);
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MonoSingleton<T> : MonoBehaviour
 {
+
     // Start is called before the first frame update
     protected void Start()
     {

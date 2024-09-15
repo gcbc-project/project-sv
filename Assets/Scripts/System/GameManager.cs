@@ -60,12 +60,18 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        Data.Update(Time.deltaTime *  Time.timeScale);
+        Data.Update(Time.deltaTime * Time.timeScale);
+    }
+    public void ResetData()
+    {
+        Data = null;
+        PlayerPrefs.DeleteKey("save");
+        Application.Quit();
     }
 
     private void OnDestroy()
     {
-        Data.SaveData();
+        Data?.SaveData();
     }
 
     /// <summary> 

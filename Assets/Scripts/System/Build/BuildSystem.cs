@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -6,7 +7,7 @@ public class BuildSystem
   private Tilemap _tilemap;
   private Tilemap _groundTilemap;
   private TileBase _transparentTile;
-  private BuildingSO _selectedBuilding;
+  public BuildingSO SelectedBuilding;
 
   public BuildSystem(Tilemap tilemap, Tilemap groundTilemap, TileBase transparentTile)
   {
@@ -17,19 +18,19 @@ public class BuildSystem
 
   public void SelectBuilding(BuildingSO building, BuildingPreviewSystem previewSystem)
   {
-    _selectedBuilding = building;
-    previewSystem.SetSelectedBuilding(_selectedBuilding);
+    SelectedBuilding = building;
+    previewSystem.SetSelectedBuilding(SelectedBuilding);
   }
 
   public void PlaceBuilding(BuildingPreviewSystem previewSystem)
   {
-    if (_selectedBuilding == null) return;
+    if (SelectedBuilding == null) return;
 
     Vector3Int cellPosition = previewSystem.GetCellPositionFromMouse();
 
     if (CanPlaceBuilding(cellPosition))
     {
-      PlaceBuildingAt(cellPosition);
+      BuildingData.Create(SelectedBuilding, new Vector2(cellPosition.x, cellPosition.y));
     }
     else
     {
@@ -40,12 +41,12 @@ public class BuildSystem
   private bool CanPlaceBuilding(Vector3Int position)
   {
     // 건물의 크기를 고려하여 오프셋 계산
-    Vector3Int offset = new Vector3Int(-_selectedBuilding.Size.x / 2, _selectedBuilding.Size.y / 2 - 1, 0);
+    Vector3Int offset = new Vector3Int(-SelectedBuilding.Size.x / 2, SelectedBuilding.Size.y / 2 - 1, 0);
     Vector3Int topLeftPosition = position + offset;
 
-    for (int x = 0; x < _selectedBuilding.Size.x; x++)
+    for (int x = 0; x < SelectedBuilding.Size.x; x++)
     {
-      for (int y = 0; y < _selectedBuilding.Size.y; y++)
+      for (int y = 0; y < SelectedBuilding.Size.y; y++)
       {
         // Y축 방향 조정 (-y)를 통해 아래 방향으로 검사
         Vector3Int cell = topLeftPosition + new Vector3Int(x, -y, 0);
@@ -59,32 +60,34 @@ public class BuildSystem
   }
 
 
-  private void PlaceBuildingAt(Vector3Int position)
+  public GameObject PlaceBuildingAt(Vector3Int position)
   {
-    // 오프셋 적용하여 좌측 상단 위치 계산
-    Vector3Int offset = new Vector3Int(-_selectedBuilding.Size.x / 2, _selectedBuilding.Size.y / 2 - 1, 0);
+    // Calculate top-left position with offset
+    Vector3Int offset = new Vector3Int(-SelectedBuilding.Size.x / 2, SelectedBuilding.Size.y / 2 - 1, 0);
     Vector3Int topLeftPosition = position + offset;
 
-    // 좌측 상단 타일에만 건물 타일 배치
-    Tile tempTile = ScriptableObject.CreateInstance<Tile>();
-    tempTile.gameObject = _selectedBuilding.Prefab;
-    _tilemap.SetTile(topLeftPosition, tempTile);
+    // Instantiate the building prefab at the correct world position
+    Vector3 worldPosition = _tilemap.CellToWorld(topLeftPosition) + _tilemap.tileAnchor;
+    GameObject instantiatedBuilding = GameObject.Instantiate(SelectedBuilding.Prefab, worldPosition, Quaternion.identity);
+    instantiatedBuilding.transform.parent = _tilemap.transform; // Optional: Set parent to the Tilemap
 
-    // 나머지 영역은 투명 타일로 설정하여 차있음을 표시
-    for (int x = 0; x < _selectedBuilding.Size.x; x++)
+    // Optionally, set a tile without a GameObject at the top-left position
+    Tile tile = ScriptableObject.CreateInstance<Tile>();
+    _tilemap.SetTile(topLeftPosition, tile);
+
+    // Set transparent tiles for the rest of the area
+    for (int x = 0; x < SelectedBuilding.Size.x; x++)
     {
-      for (int y = 0; y < _selectedBuilding.Size.y; y++)
+      for (int y = 0; y < SelectedBuilding.Size.y; y++)
       {
         Vector3Int cellPosition = topLeftPosition + new Vector3Int(x, -y, 0);
 
-        // 좌측 상단 타일은 이미 설정했으므로 건너뜁니다
         if (cellPosition == topLeftPosition)
           continue;
 
-        // 투명 타일로 설정 (null 또는 투명한 타일 리소스)
         _tilemap.SetTile(cellPosition, _transparentTile);
       }
     }
+    return instantiatedBuilding;
   }
-
 }

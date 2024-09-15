@@ -85,6 +85,7 @@ public class GameData
         {
             ele.Load();
         }
+        BuildManager.Get().BuildNavMesh();
     }
 
     public void SaveData()

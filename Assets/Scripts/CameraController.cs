@@ -15,6 +15,7 @@ public class CameraController : MonoBehaviour
     private Vector3 cameraTargetPosition;           // LateUpdate에서 적용할 카메라 위치
 
     private Transform cameraFollowTarget;           // 카메라가 따라갈 빈 오브젝트
+    private CinemachineConfiner2D confiner;         // Confiner2D 참조
 
     void Start()
     {
@@ -23,6 +24,9 @@ public class CameraController : MonoBehaviour
         cameraFollowTarget = followObject.transform;
         virtualCamera.Follow = cameraFollowTarget;
         cameraTargetPosition = cameraFollowTarget.position; // 초기값 설정
+
+        // Confiner2D 컴포넌트 가져오기
+        confiner = virtualCamera.GetComponent<CinemachineConfiner2D>();
     }
 
     void Update()
@@ -34,7 +38,7 @@ public class CameraController : MonoBehaviour
             if (dragOrigin == Vector2.zero)
             {
                 dragOrigin = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-                cameraOrigin = cameraFollowTarget.position;
+                cameraOrigin = cameraTargetPosition;
             }
 
             // 현재 마우스 위치
@@ -44,7 +48,14 @@ public class CameraController : MonoBehaviour
             Vector3 difference = dragOrigin - currentMousePos;
 
             // 드래그 시작 시점의 카메라 위치에서 차이값을 적용하여 목표 위치 설정
-            cameraTargetPosition = cameraOrigin + (Vector3)difference * dragSpeed;
+            cameraTargetPosition = cameraOrigin + difference * dragSpeed;
+
+            // Confiner2D의 경계 내로 위치 제한
+            if (confiner != null && confiner.m_BoundingShape2D != null)
+            {
+                Vector2 confinedPosition = confiner.m_BoundingShape2D.ClosestPoint(cameraTargetPosition);
+                cameraTargetPosition = new Vector3(confinedPosition.x, confinedPosition.y, cameraTargetPosition.z);
+            }
         }
         else
         {
@@ -60,6 +71,12 @@ public class CameraController : MonoBehaviour
             lens.OrthographicSize -= scrollValue * zoomSpeed * Time.deltaTime;
             lens.OrthographicSize = Mathf.Clamp(lens.OrthographicSize, minZoom, maxZoom);
             virtualCamera.m_Lens = lens;
+
+            // 줌이 변경되었을 때 Confiner2D 업데이트
+            if (confiner != null)
+            {
+                confiner.InvalidateCache();
+            }
         }
     }
 

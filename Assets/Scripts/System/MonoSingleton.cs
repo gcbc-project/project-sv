@@ -12,10 +12,6 @@ public class MonoSingleton<T> : MonoBehaviour
 
     protected void OnDestroy()
     {
-        var GM = GameManager.Get(false);
-        if (GM)
-        {
-            GM.UnregisterMonoSingleton<T>(this);
-        }
+        GameManager.Get(false)?.UnregisterMonoSingleton<T>(this);
     }
 }

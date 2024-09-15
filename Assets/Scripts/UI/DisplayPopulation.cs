@@ -12,7 +12,7 @@ public class DisplayPopulation : MonoBehaviour
     }
     private void Update()
     {
-        m_TextMeshProUGUI.text = "1"+"/"+"10";
-        //추후 GetNowPopul(),GetMaxPopul() 생기면 숫자 대신 집어넣기
+        GameData data = GameManager.Get().Data;
+        m_TextMeshProUGUI.text =  $"{data.Humans.Count}/{data.GetMaxHumans()}";
     }
 }

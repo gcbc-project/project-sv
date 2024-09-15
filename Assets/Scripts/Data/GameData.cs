@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
-
-
-
+using Random = UnityEngine.Random;
 
 [Serializable]
 public class GameData
@@ -20,7 +18,10 @@ public class GameData
     public const float Game_MonthTime = Game_WeekTime * 4;
     public const float Game_YearTime = Game_MonthTime * 12;
     public const float Human_UseSqrDistance = 4.0f;
-    public const float Human_MovementSpeed = 1.0f;
+    public const float Human_MovementSpeed = 0.5f;
+    public const int Human_BodyCount = 1;
+    public const int Human_ClothesCount = 9;
+    public const int Human_HairCount = 10;
     public const float Human_BuffTime = 30.0f;
     public const float Building_UseTime = 3.0f;
     public const float Building_CoolTime = 5.0f;
@@ -133,7 +134,7 @@ public class GameData
     void InitData()
     {
         Gold.Value = Game_StartGold;
-        HumanData.Create(GameManager.Get().HumanSO);
+        HumanData.Create(GameManager.Get().HumanSO, default(HumanOutfit));
     }
 
     void CalculateMaintainCost()
@@ -173,7 +174,11 @@ public class GameData
     {
         if (Fame.Value >= Game_ImmigrationFame && Humans.Count < GetMaxHumans())
         {
-            HumanData.Create(GameManager.Get().HumanSO);
+            HumanOutfit humanOutfit;
+            humanOutfit.Body = Random.Range(0, GameData.Human_BodyCount);
+            humanOutfit.Clothes = Random.Range(0, GameData.Human_ClothesCount);
+            humanOutfit.Hair = Random.Range(0, GameData.Human_HairCount);
+            HumanData.Create(GameManager.Get().HumanSO, humanOutfit);
 
             Fame.Value -= Game_ImmigrationFame;
         }

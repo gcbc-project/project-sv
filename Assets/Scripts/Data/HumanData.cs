@@ -9,8 +9,9 @@ using Random = UnityEngine.Random;
 [Serializable]
 public struct HumanOutfit
 {
-    uint Head;
-    uint Body;
+    public int Body;
+    public int Clothes;
+    public int Hair;
 }
 
 public struct HumanBuff
@@ -51,7 +52,7 @@ public class HumanData : EntityData
 {
     HumanData() {}
 
-    public static HumanData Create(EntitySO entitySO)
+    public static HumanData Create(EntitySO entitySO, HumanOutfit humanOutfit)
     {
         var instance = new HumanData();
         instance._so = entitySO;
@@ -105,6 +106,8 @@ public class HumanData : EntityData
         _agent.updateRotation = false;
         _agent.updateUpAxis = false;
         _agent.stoppingDistance = MathF.Sqrt(GameData.Human_UseSqrDistance);
+
+        gameObject.GetComponent<HumanEntity>()?.SetOutfit(Outfit.Value);
 
         SetState(HumanState.Move);
     }

@@ -8,6 +8,7 @@ public class BuildManager : MonoBehaviour
   public Tilemap MainTilemap;
   public Tilemap PreviewTilemap;
   public Tilemap ValidityTilemap;
+  public Tilemap GroundTilemap;
   public TileBase ValidTile;
   public TileBase InvalidTile;
   public TileBase TransparentTile;
@@ -22,8 +23,8 @@ public class BuildManager : MonoBehaviour
 
   void Awake()
   {
-    _buildSystem = new BuildSystem(MainTilemap, TransparentTile);
-    _buildingPreviewSystem = new BuildingPreviewSystem(PreviewTilemap, ValidityTilemap, MainTilemap, ValidTile, InvalidTile);
+    _buildSystem = new BuildSystem(MainTilemap, GroundTilemap, TransparentTile);
+    _buildingPreviewSystem = new BuildingPreviewSystem(PreviewTilemap, ValidityTilemap, MainTilemap, GroundTilemap, ValidTile, InvalidTile);
   }
 
   void Update()

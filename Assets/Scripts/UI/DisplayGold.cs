@@ -12,7 +12,7 @@ public class DisplayGold : MonoBehaviour
     }
     private void Update()
     {
-        m_TextMeshProUGUI.text = "100" + "G";
+        m_TextMeshProUGUI.text = $"{GameManager.Get().Data.Gold.Value}G";
         //추후 GetGold() 생기면 "100"대신 집어넣기
     }
 }

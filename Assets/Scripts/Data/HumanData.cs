@@ -94,6 +94,13 @@ public class HumanData : EntityData
         }
     }
 
+    public override void Load()
+    {
+        base.Load();
+
+        SetState(HumanState.Move);
+    }
+
     public void Buff(float multiplier)
     {
         _buff.SetBuff(multiplier);
@@ -141,16 +148,23 @@ public class HumanData : EntityData
 
         if (buildingSOs.Count == 0)
         {
-            if (_prevBuildings.Count == 0)
+            foreach (var ele in _prevBuildings)
             {
-                Debug.LogError("no buildings");
+                if (ele != null)
+                {
+                    buildingSOs.Add(ele);
+                    break;
+                }
             }
-
-            buildingSOs.Add(_prevBuildings[0]);
         }
 
         var index = Random.Range(0, buildingSOs.Count);
         _nextBuilding = GameManager.Get().Data.GetNearestBuilding(Location.Value, buildingSOs.ToArray()[index]);
+
+        if (_nextBuilding == null)
+        {
+            Debug.LogError("no next building");
+        }
     }
 
     void MoveToNextBuilding(float timeDelta)

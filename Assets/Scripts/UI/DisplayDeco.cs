@@ -12,7 +12,7 @@ public class DisplayDeco : MonoBehaviour
     }
     private void Update()
     {
-        m_TextMeshProUGUI.text = "10";
+        m_TextMeshProUGUI.text = $"{GameManager.Get().Data.Fame.Value}";
         //추후 GetDeco() 생기면 "10"대신 집어넣기
     }
 }

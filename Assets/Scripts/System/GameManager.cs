@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        Data.Update(Time.deltaTime);
+        Data.Update(Time.deltaTime *  Time.timeScale);
     }
 
     private void OnDestroy()

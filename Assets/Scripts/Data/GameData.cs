@@ -16,11 +16,11 @@ public class GameData
     public const float Game_BuildingPanalty = 1.1f;
     public const int Game_ImmigrationFame = 1000;
     public const float Game_FameMultiplier = 5.0f;
-    public const float Game_DayTime = 10.0f;
-    public const float Game_WeekTime = Game_DayTime * 7;
+    public const float Game_WeekTime = 30.0f;
     public const float Game_MonthTime = Game_WeekTime * 4;
+    public const float Game_YearTime = Game_MonthTime * 12;
     public const float Human_UseSqrDistance = 4.0f;
-    public const float Human_MovementSpeed = 1.0f;
+    public const float Human_MovementSpeed = 100.0f;
     public const float Human_BuffTime = 30.0f;
     public const float Building_UseTime = 3.0f;
     public const float Building_CoolTime = 5.0f;
@@ -37,7 +37,8 @@ public class GameData
     {
         Time.Value += timeDelta;
 
-        if (Time.Value % Game_MonthTime < timeDelta)
+        float divVal = Time.Value / Game_MonthTime;
+        if ((Time.Value - ((int)divVal) * Game_MonthTime) < timeDelta)
         {
             CalculateMaintainCost();
             CalculateFame();
@@ -73,7 +74,17 @@ public class GameData
         else
         {
             InitData();
-        }    
+        }
+
+        foreach (var ele in Buildings)
+        {
+            ele.Load();
+        }
+
+        foreach (var ele in Humans)
+        {
+            ele.Load();
+        }
     }
 
     public void SaveData()

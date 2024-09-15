@@ -4,12 +4,14 @@ using UnityEngine.Tilemaps;
 public class BuildSystem
 {
   private Tilemap _tilemap;
+  private Tilemap _groundTilemap;
   private TileBase _transparentTile;
   private BuildingSO _selectedBuilding;
 
-  public BuildSystem(Tilemap tilemap, TileBase transparentTile)
+  public BuildSystem(Tilemap tilemap, Tilemap groundTilemap, TileBase transparentTile)
   {
     this._tilemap = tilemap;
+    this._groundTilemap = groundTilemap;
     this._transparentTile = transparentTile;
   }
 
@@ -47,7 +49,7 @@ public class BuildSystem
       {
         // Y축 방향 조정 (-y)를 통해 아래 방향으로 검사
         Vector3Int cell = topLeftPosition + new Vector3Int(x, -y, 0);
-        if (_tilemap.GetTile(cell) != null)
+        if (_tilemap.GetTile(cell) != null || _groundTilemap.GetTile(cell) == null)
         {
           return false; // 해당 위치에 타일이 이미 있음
         }

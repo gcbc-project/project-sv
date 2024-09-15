@@ -8,16 +8,18 @@ public class BuildingPreviewSystem
   private Tilemap _previewTilemap; // 건물 미리보기 타일맵
   private Tilemap _validityTilemap; // 설치 가능성 타일맵
   private Tilemap _mainTilemap;
+  private Tilemap _groundTilemap;
   private TileBase _validTile;
   private TileBase _invalidTile;
   private BuildingSO _selectedBuilding;
   private Vector3Int _previousCellPosition;
 
-  public BuildingPreviewSystem(Tilemap previewTilemap, Tilemap validityTilemap, Tilemap mainTilemap, TileBase validTile, TileBase invalidTile)
+  public BuildingPreviewSystem(Tilemap previewTilemap, Tilemap validityTilemap, Tilemap mainTilemap, Tilemap groundTilemap, TileBase validTile, TileBase invalidTile)
   {
     this._previewTilemap = previewTilemap;
     this._validityTilemap = validityTilemap;
     this._mainTilemap = mainTilemap;
+    this._groundTilemap = groundTilemap;
     this._validTile = validTile;
     this._invalidTile = invalidTile;
     _previousCellPosition = Vector3Int.zero; // 초기값 설정
@@ -90,7 +92,7 @@ public class BuildingPreviewSystem
         Vector3Int cell = topLeftPosition + new Vector3Int(x, -y, 0);
 
         // 해당 셀에 타일이 있는지 확인
-        bool cellCanPlace = tilemap.GetTile(cell) == null;
+        bool cellCanPlace = tilemap.GetTile(cell) == null && _groundTilemap.GetTile(cell) != null;
 
         // 설치 가능 여부에 따라 타일 선택
         TileBase tileToSet = cellCanPlace ? _validTile : _invalidTile;
@@ -101,23 +103,21 @@ public class BuildingPreviewSystem
     }
   }
 
-  private bool CanPlaceBuilding(Vector3Int topLeftPosition)
-  {
-    Tilemap tilemap = _mainTilemap;
-    for (int x = 0; x < _selectedBuilding.Size.x; x++)
-    {
-      for (int y = 0; y < _selectedBuilding.Size.y; y++)
-      {
-        // Y축 방향 조정 (-y)를 통해 아래 방향으로 검사
-        Vector3Int cell = topLeftPosition + new Vector3Int(x, -y, 0);
-        if (tilemap.GetTile(cell) != null)
-        {
-          return false; // 해당 위치에 타일이 이미 있음
-        }
-      }
-    }
-    return true; // 모든 위치가 비어 있음
-  }
-
-
+  // private bool CanPlaceBuilding(Vector3Int topLeftPosition)
+  // {
+  //   Tilemap tilemap = _mainTilemap;
+  //   for (int x = 0; x < _selectedBuilding.Size.x; x++)
+  //   {
+  //     for (int y = 0; y < _selectedBuilding.Size.y; y++)
+  //     {
+  //       // Y축 방향 조정 (-y)를 통해 아래 방향으로 검사
+  //       Vector3Int cell = topLeftPosition + new Vector3Int(x, -y, 0);
+  //       if (tilemap.GetTile(cell) != null)
+  //       {
+  //         return false; // 해당 위치에 타일이 이미 있음
+  //       }
+  //     }
+  //   }
+  //   return true; // 모든 위치가 비어 있음
+  // }
 }

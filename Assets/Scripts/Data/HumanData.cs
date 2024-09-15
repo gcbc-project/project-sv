@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 [Serializable]
@@ -69,12 +70,14 @@ public class HumanData : EntityData
     HumanBuff _buff;
     [NonSerialized]
     BuildingData _nextBuilding = null;
+    NavMeshAgent _agent;
 
     HumanState _state;
 
     public void Update(float timeDelta)
     {
         _buff.Update(timeDelta);
+        _agent.speed = _buff.Multiplier * GameData.Human_MovementSpeed;
 
         switch (_state)
         {
@@ -84,12 +87,13 @@ public class HumanData : EntityData
                 {
                     SetState(HumanState.Wait);
                 }
+                //gameObject.GetComponent<Renderer>().enabled = true;
                 break;
             case HumanState.Wait:
                 TryUseBuilding();
                 break;
             case HumanState.Use:
-                // do nothing
+                //gameObject.GetComponent<Renderer>().enabled = true;
                 break;
         }
     }
@@ -97,6 +101,10 @@ public class HumanData : EntityData
     public override void Load()
     {
         base.Load();
+        _agent = gameObject.GetComponent<NavMeshAgent>();
+        _agent.updateRotation = false;
+        _agent.updateUpAxis = false;
+        _agent.stoppingDistance = MathF.Sqrt(GameData.Human_UseSqrDistance);
 
         SetState(HumanState.Move);
     }
@@ -128,6 +136,7 @@ public class HumanData : EntityData
         {
             case HumanState.Move:
                 CalculateNextBuilding();
+                ToGoBuilding();
                 break;
             case HumanState.Wait:
             case HumanState.Use:
@@ -166,6 +175,11 @@ public class HumanData : EntityData
         {
             Debug.LogError("no next building");
         }
+    }
+
+    void ToGoBuilding()
+    {
+        _agent.SetDestination(_nextBuilding.Location.Value);
     }
 
     void MoveToNextBuilding(float timeDelta)

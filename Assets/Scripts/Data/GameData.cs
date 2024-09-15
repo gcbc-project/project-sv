@@ -115,6 +115,21 @@ public class GameData
         return buildingData;
     }
 
+    public int GetMaxHumans()
+    {
+        int buildingLimit = 0;
+        foreach (var ele in Buildings)
+        {
+            BuildingSO so = ele.GetSO();
+            if (so.Effect.Type == BuildingType.House)
+            {
+                buildingLimit += (int)(so.Effect.Value * 10 - 10);  // 이동속도 120% => 최대 인원 2명
+            }
+        }
+
+        return Mathf.Min(buildingLimit, Game_MaxHumans);
+    }
+
     void InitData()
     {
         Gold.Value = Game_StartGold;
@@ -156,7 +171,7 @@ public class GameData
 
     void TryImmigration()
     {
-        if (Fame.Value >= Game_ImmigrationFame && Humans.Count < Game_MaxHumans)
+        if (Fame.Value >= Game_ImmigrationFame && Humans.Count < GetMaxHumans())
         {
             HumanData.Create(GameManager.Get().HumanSO);
 

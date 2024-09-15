@@ -58,12 +58,23 @@ public class BuildingData : EntityData
     }
     public static BuildingData Create(BuildingSO buildingSO, Vector2 location)
     {
+        GameData gameData = GameManager.Get().Data;
+        if (gameData.Fame.Value < buildingSO.RequiredFame || gameData.Gold.Value < buildingSO.BuildCost)
+        {
+            return null;
+        }
+        else
+        {
+            gameData.Gold.Value -= buildingSO.BuildCost;
+        }
+
         var instance = new BuildingData();
         instance._so = buildingSO;
+        instance.BuildingTime.Value = buildingSO.BuildTime;
         instance.Location.Value = location;
         instance.Load();
 
-        GameManager.Get().Data.Buildings.Add(instance);
+        gameData.Buildings.Add(instance);
         return instance;
     }
 
@@ -91,6 +102,11 @@ public class BuildingData : EntityData
 
     public bool UseBuilding(HumanData humanData)
     {
+        if (BuildingTime.Value > 0.0f)
+        {
+            return false;
+        }
+
         foreach (var ele in Slots)
         {
             if (ele.SetHuman(humanData))

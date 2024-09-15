@@ -20,7 +20,7 @@ public class GameData
     public const float Game_MonthTime = Game_WeekTime * 4;
     public const float Game_YearTime = Game_MonthTime * 12;
     public const float Human_UseSqrDistance = 4.0f;
-    public const float Human_MovementSpeed = 100.0f;
+    public const float Human_MovementSpeed = 1.0f;
     public const float Human_BuffTime = 30.0f;
     public const float Building_UseTime = 3.0f;
     public const float Building_CoolTime = 5.0f;
@@ -115,6 +115,21 @@ public class GameData
         return buildingData;
     }
 
+    public int GetMaxHumans()
+    {
+        int buildingLimit = 0;
+        foreach (var ele in Buildings)
+        {
+            BuildingSO so = ele.GetSO();
+            if (so.Effect.Type == BuildingType.House)
+            {
+                buildingLimit += (int)(so.Effect.Value * 10 - 10);  // 이동속도 120% => 최대 인원 2명
+            }
+        }
+
+        return Mathf.Min(buildingLimit, Game_MaxHumans);
+    }
+
     void InitData()
     {
         Gold.Value = Game_StartGold;
@@ -156,7 +171,7 @@ public class GameData
 
     void TryImmigration()
     {
-        if (Fame.Value >= Game_ImmigrationFame && Humans.Count < Game_MaxHumans)
+        if (Fame.Value >= Game_ImmigrationFame && Humans.Count < GetMaxHumans())
         {
             HumanData.Create(GameManager.Get().HumanSO);
 
